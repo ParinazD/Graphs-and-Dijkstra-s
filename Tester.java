@@ -2,38 +2,45 @@ package Graphs;
 import java.util.*;
 
 public class Tester {
+	
+	/**
+	 * Simple implementation of dijkstra's that
+	 * finds shortest path between two nodes using BFS
+	 * @param graph
+	 * @param startNode
+	 * @param endNode
+	 */
 	public static void findShortestPath(Graph graph, int startNode, int endNode) {
 		Map<Integer, Integer> parentMap = createParentMap(graph, startNode); 
         boolean found = parentMap.containsKey(endNode);
 
-        // 3. Path Reconstruction
+        // reconstruct path
         if (found) {
             LinkedList<Integer> path = new LinkedList<>();
             Integer current = endNode;
             
             // Trace backward from the end node to the start node
             while (current != null) {
-                path.addFirst(current); // Prepend node to build path in correct order
+                path.addFirst(current);
                 current = parentMap.get(current); // Move to the parent
                 
-                // Stop condition: If we reached the start node, it won't have an entry in the map
                 if (current == null && path.getFirst() != startNode) {
-                    // This handles the case where the start node is not the parent of anything
-                    // which prevents infinite loop if the map lookup returns null for start node.
+                    //when the start node is not the parent of anything
                     break;
-                } else if (current != null && current == startNode) {
+                 
+                }else if (current != null && current == startNode) {
                     // Manually add the start node and exit the loop
                     path.addFirst(current);
                     break;
                 }
             }
 
-            System.out.println("Shortest path from " + startNode + " to " + endNode + ": " + path);
-            System.out.println("Length: " + (path.size() - 1));
+            System.out.println("Length of SP: " + (path.size() - 1));
         } else {
             System.out.println("No path found from " + startNode + " to " + endNode + ".");
         }
     }
+	
 	 /**
      * helper that uses BFS to find parents of each node
      * @param graph The Graph object.
@@ -106,6 +113,10 @@ public class Tester {
         nodeToCheck = 4;
         System.out.println("Out-Degree of Node " + nodeToCheck + ": " + myGraph.getOutDegree(nodeToCheck));
         System.out.println("In-Degree of Node " + nodeToCheck + ": " + myGraph.getInDegree(nodeToCheck));
-    }
+        
+        
+        findShortestPath(myGraph, 0, 3); // Path: 0 -> 1 -> 3 (Length 2)
+        findShortestPath(myGraph, 2, 4); // Path: 2 -> 3 -> 4 (Length 2)
+	}
 }
 
