@@ -3,7 +3,36 @@ import java.util.*;
 
 public class Tester {
 	public static void findShortestPath(Graph graph, int startNode, int endNode) {
-        
+		Map<Integer, Integer> parentMap = createParentMap(graph, startNode); 
+        boolean found = parentMap.containsKey(endNode);
+
+        // 3. Path Reconstruction
+        if (found) {
+            LinkedList<Integer> path = new LinkedList<>();
+            Integer current = endNode;
+            
+            // Trace backward from the end node to the start node
+            while (current != null) {
+                path.addFirst(current); // Prepend node to build path in correct order
+                current = parentMap.get(current); // Move to the parent
+                
+                // Stop condition: If we reached the start node, it won't have an entry in the map
+                if (current == null && path.getFirst() != startNode) {
+                    // This handles the case where the start node is not the parent of anything
+                    // which prevents infinite loop if the map lookup returns null for start node.
+                    break;
+                } else if (current != null && current == startNode) {
+                    // Manually add the start node and exit the loop
+                    path.addFirst(current);
+                    break;
+                }
+            }
+
+            System.out.println("Shortest path from " + startNode + " to " + endNode + ": " + path);
+            System.out.println("Length: " + (path.size() - 1));
+        } else {
+            System.out.println("No path found from " + startNode + " to " + endNode + ".");
+        }
     }
 	 /**
      * helper that uses BFS to find parents of each node
@@ -21,7 +50,10 @@ public class Tester {
         
         // Set to track visited nodes
         Set<Integer> visited = new HashSet<>();
-        
+        if (startNode < 0 || startNode >= graph.getSize()) {
+            return parentMap; // Return empty map on invalid input
+        }
+
         // Initialize BFS
         queue.add(startNode);
         visited.add(startNode);
@@ -41,6 +73,7 @@ public class Tester {
         
         return parentMap;
     }
+    
     
     
 	public static void main(String[] args) {
